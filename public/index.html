@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>インターロック 3D</title>
-<meta name="description" content="インターロック（ボディダウン/アップと7つの動き）を3D人体モデルで再現。首・胸・腰の連動を見て学べる。">
+<meta name="description" content="インターロック（ボディダウン/アップと7つの動き）を3Dキャラで再現。手持ちの曲に合わせてランダムな動きで練習できる。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
 { "imports": {
@@ -15,14 +15,42 @@
 } }
 </script>
 </head>
-<body>
+<body data-mode="learn">
 <header class="top">
-  <div class="brand"><span class="logo">IL</span><div><h1>インターロック 3D</h1><p>ボディダウン／アップと7つのインターロックを、連動まで3Dで再現</p></div></div>
-  <a class="src" href="https://youtu.be/FYvDc13txdw" target="_blank" rel="noopener">元動画（YouTube）</a>
+  <div class="brand"><span class="logo">IL</span><div><h1>インターロック 3D</h1><p>ボディダウン／アップと7つのインターロックを、連動まで3Dで</p></div></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-mode="learn" class="on">ムーブ解説</button>
+    <button role="tab" data-mode="practice">曲で練習</button>
+  </div>
 </header>
 
 <main class="layout">
-  <nav class="moves" id="moveList" aria-label="ムーブ一覧"></nav>
+  <!-- 左カラム: 解説モード=ムーブ一覧 / 練習モード=設定 -->
+  <nav class="moves only-learn" id="moveList" aria-label="ムーブ一覧"></nav>
+
+  <aside class="side only-practice">
+    <div class="card">
+      <h3>1. 音源を選ぶ</h3>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept="audio/*,video/mp4,.m4a,.mp3,.wav">
+        <span><b>ファイルを選ぶ</b> またはここにドロップ</span>
+        <small>音源はこの端末の中だけで再生します（アップロードしません）</small>
+      </label>
+      <p class="status" id="songStatus">まだ音源がありません</p>
+    </div>
+    <div class="card">
+      <h3>2. 速さ</h3>
+      <div class="rates" id="rates"></div>
+      <p class="muted" id="rateInfo"></p>
+    </div>
+    <div class="card">
+      <h3>3. 出てくる動き</h3>
+      <label class="radio"><input type="radio" name="pool" value="basic" checked> 基本（ボディ2種＋7つのインターロック）</label>
+      <label class="radio"><input type="radio" name="pool" value="all"> バリエーションも全部</label>
+      <button class="btn" id="shuffle">🎲 動きをシャッフル</button>
+      <label class="chk"><input type="checkbox" id="loopSec"> 今のセクションをくり返す</label>
+    </div>
+  </aside>
 
   <section class="stage-wrap">
     <div class="stage" id="stage">
@@ -31,21 +59,30 @@
         <div class="count" id="count">1</div>
       </div>
       <div class="beats" id="beats"></div>
+      <div class="next only-practice" id="nextBox"></div>
       <div class="caption" id="caption"></div>
       <div class="legend">
         <span><i class="sw primary"></i>主役（打つ部位）</span>
         <span><i class="sw linked"></i>連動する部位</span>
       </div>
     </div>
+
+    <div class="transport only-practice">
+      <button id="pPlay" class="btn main" disabled>▶ 再生</button>
+      <input type="range" id="seek" min="0" max="1" step="0.01" value="0" disabled aria-label="再生位置">
+      <span class="time" id="time">0:00 / 0:00</span>
+    </div>
+    <div class="timeline only-practice" id="timeline"></div>
+
     <div class="controls">
-      <button id="play" class="btn main" aria-label="再生/一時停止">❚❚ 一時停止</button>
+      <button id="play" class="btn main only-learn">❚❚ 一時停止</button>
       <div class="seg" role="group" aria-label="カメラ">
         <button data-cam="front">正面</button><button data-cam="side">横</button><button data-cam="diag">斜め</button><button data-cam="back">後ろ</button>
       </div>
-      <label class="slider">テンポ <input type="range" id="speed" min="0.4" max="1.4" step="0.05" value="1"><span id="bpm">-- BPM</span></label>
-      <label class="chk"><input type="checkbox" id="click"> メトロノーム</label>
-      <label class="chk"><input type="checkbox" id="hl" checked> 部位を色分け</label>
-      <label class="chk"><input type="checkbox" id="auto"> 全部を連続再生</label>
+      <label class="slider only-learn">テンポ <input type="range" id="speed" min="0.4" max="1.4" step="0.05" value="1"><span id="bpm">-- BPM</span></label>
+      <label class="chk only-learn"><input type="checkbox" id="click"> メトロノーム</label>
+      <label class="chk"><input type="checkbox" id="hl" checked> 部位を光らせる</label>
+      <label class="chk only-learn"><input type="checkbox" id="auto"> 全部を連続再生</label>
     </div>
     <article class="info">
       <p class="summary" id="summary"></p>
@@ -55,7 +92,7 @@
   </section>
 </main>
 
-<section class="overview">
+<section class="overview only-learn">
   <h2>7つのインターロック早見表</h2>
   <div class="grid7">
     <div class="h"></div><div class="h">前</div><div class="h">後ろ</div><div class="h">横</div>
@@ -65,7 +102,7 @@
   </div>
   <h2>全体を通しての主張</h2>
   <ul class="general" id="general"></ul>
-  <p class="note">※ 動画（TonyTee「Interlock method」）の説明を要約し、3Dモデルの動きに落とし込んだものです。人物モデルはオリジナルの汎用モデルです。</p>
+  <p class="note">※ 解説は <a href="https://youtu.be/FYvDc13txdw" target="_blank" rel="noopener">TonyTee「Interlock method」</a> の内容を要約し、3Dの動きに落とし込んだものです。キャラクターはオリジナルです。</p>
 </section>
 
 <script type="module" src="app.js"></script>
