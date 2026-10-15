@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>インターロック 3D</title>
+<meta name="description" content="インターロック（ボディダウン/アップと7つの動き）を3D人体モデルで再現。首・胸・腰の連動を見て学べる。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">IL</span><div><h1>インターロック 3D</h1><p>ボディダウン／アップと7つのインターロックを、連動まで3Dで再現</p></div></div>
+  <a class="src" href="https://youtu.be/FYvDc13txdw" target="_blank" rel="noopener">元動画（YouTube）</a>
+</header>
+
+<main class="layout">
+  <nav class="moves" id="moveList" aria-label="ムーブ一覧"></nav>
+
+  <section class="stage-wrap">
+    <div class="stage" id="stage">
+      <div class="hud">
+        <div class="hud-title"><span id="moveGroup"></span><strong id="moveName"></strong><em id="moveEn"></em></div>
+        <div class="count" id="count">1</div>
+      </div>
+      <div class="beats" id="beats"></div>
+      <div class="caption" id="caption"></div>
+      <div class="legend">
+        <span><i class="sw primary"></i>主役（打つ部位）</span>
+        <span><i class="sw linked"></i>連動する部位</span>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="play" class="btn main" aria-label="再生/一時停止">❚❚ 一時停止</button>
+      <div class="seg" role="group" aria-label="カメラ">
+        <button data-cam="front">正面</button><button data-cam="side">横</button><button data-cam="diag">斜め</button><button data-cam="back">後ろ</button>
+      </div>
+      <label class="slider">テンポ <input type="range" id="speed" min="0.4" max="1.4" step="0.05" value="1"><span id="bpm">-- BPM</span></label>
+      <label class="chk"><input type="checkbox" id="click"> メトロノーム</label>
+      <label class="chk"><input type="checkbox" id="hl" checked> 部位を色分け</label>
+      <label class="chk"><input type="checkbox" id="auto"> 全部を連続再生</label>
+    </div>
+    <article class="info">
+      <p class="summary" id="summary"></p>
+      <h2>動画で言っていること <a id="ts" target="_blank" rel="noopener"></a></h2>
+      <ul id="points"></ul>
+    </article>
+  </section>
+</main>
+
+<section class="overview">
+  <h2>7つのインターロック早見表</h2>
+  <div class="grid7">
+    <div class="h"></div><div class="h">前</div><div class="h">後ろ</div><div class="h">横</div>
+    <div class="h">首</div><button data-go="bird">バード</button><div class="na">―</div><div class="na">―</div>
+    <div class="h">胸</div><button data-go="swan">スワン</button><button data-go="bat">バット</button><button data-go="panther">パンサー</button>
+    <div class="h">腰</div><button data-go="duck">ダック</button><button data-go="shrimp">シュリンプ</button><button data-go="alligator">アリゲーター</button>
+  </div>
+  <h2>全体を通しての主張</h2>
+  <ul class="general" id="general"></ul>
+  <p class="note">※ 動画（TonyTee「Interlock method」）の説明を要約し、3Dモデルの動きに落とし込んだものです。人物モデルはオリジナルの汎用モデルです。</p>
+</section>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
